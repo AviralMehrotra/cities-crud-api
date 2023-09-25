@@ -32,7 +32,7 @@ function writeDataToFile(data) {
 
 // Define CRUD routes
 // 1. Create (POST)
-app.post("/api/items", (req, res) => {
+app.post("/cities", (req, res) => {
   const newItem = req.body;
   const data = readDataFromFile(); // Read the data from the file
   newItem.id = Date.now(); // Generate a unique ID (you can use a more robust method)
@@ -42,13 +42,13 @@ app.post("/api/items", (req, res) => {
 });
 
 // 2. Read (GET)
-app.get("/api/items", (req, res) => {
+app.get("/cities", (req, res) => {
   const data = readDataFromFile(); // Read the data from the file
   res.json(data);
 });
 
 // 3. Update (PUT)
-app.put("/api/items/:id", (req, res) => {
+app.put("/cities/id", (req, res) => {
   const itemId = parseInt(req.params.id);
   const updatedItem = req.body;
   let data = readDataFromFile(); // Read the data from the file
@@ -58,12 +58,24 @@ app.put("/api/items/:id", (req, res) => {
 });
 
 // 4. Delete (DELETE)
-app.delete("/api/items/:id", (req, res) => {
+app.delete("/cities/id", (req, res) => {
   const itemId = parseInt(req.params.id);
   let data = readDataFromFile(); // Read the data from the file
   data = data.filter((item) => item.id !== itemId);
   writeDataToFile(data); // Write the updated data back to the file
   res.json({ message: "Item deleted" });
+});
+// 5. Read a single item by ID (GET)
+app.get("/cities/id", (req, res) => {
+  const itemId = parseInt(req.params.id);
+  const data = readDataFromFile(); // Read the data from the file
+  const item = data.find((item) => item.id === itemId);
+
+  if (!item) {
+    res.status(404).json({ error: "Item not found" });
+  } else {
+    res.json(item);
+  }
 });
 
 const port = process.env.PORT || 3001;
